@@ -31,7 +31,7 @@ const VerifyOTP = ({ navigation }) => {
       }
 
       const response = await axios.post(
-        "https://mobile-backend-news.vercel.app/api/users/verify",
+        "http://192.168.8.101:5000/api/users/verify",
         { email, otp }
       );
 

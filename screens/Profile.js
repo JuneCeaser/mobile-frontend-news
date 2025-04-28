@@ -23,7 +23,7 @@ const Profile = ({ navigation }) => {
   const fetchUserDetails = async () => {
     try {
       const response = await axios.get(
-        "https://mobile-backend-news.vercel.app/api/users/me",
+        "http://192.168.8.101:5000/api/users/me",
         {
           headers: { "x-auth-token": token },
         }
@@ -39,7 +39,7 @@ const Profile = ({ navigation }) => {
   const handleDeleteAccount = async () => {
     try {
       const response = await axios.delete(
-        "https://mobile-backend-news.vercel.app/api/users/delete",
+        "http://192.168.8.101:5000/api/users/delete",
         {
           headers: { "x-auth-token": token },
         }
