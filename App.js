@@ -5,6 +5,8 @@ import AuthScreen from "./screens/AuthScreen";
 import VerifyOTP from "./screens/VerifyOTP";
 import BottomTabNavigator from "./BottomTabNavigator";
 import { AuthProvider } from "./AuthContext";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +32,16 @@ export default function App() {
             component={BottomTabNavigator}
             options={{ headerShown: false, gestureEnabled: false }}
           />
+          <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPasswordScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPasswordScreen}
+          options={{ headerShown: false }}
+        />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

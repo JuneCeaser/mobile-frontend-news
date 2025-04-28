@@ -6,18 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const VerifyOTP = ({ navigation }) => {
   const [otp, setOtp] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleVerify = async () => {
     try {
-      setIsLoading(true);
       const email = await AsyncStorage.getItem("email");
 
       if (!email) {
@@ -46,8 +43,6 @@ const VerifyOTP = ({ navigation }) => {
         "Verification Failed",
         err.response ? err.response.data.error : "Invalid OTP"
       );
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -63,16 +58,8 @@ const VerifyOTP = ({ navigation }) => {
         autoCapitalize="none"
         maxLength={6}
       />
-      <TouchableOpacity 
-        style={[styles.button, isLoading && styles.disabledButton]} 
-        onPress={handleVerify}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Verify</Text>
-        )}
+      <TouchableOpacity style={styles.button} onPress={handleVerify}>
+        <Text style={styles.buttonText}>Verify</Text>
       </TouchableOpacity>
     </View>
   );
@@ -101,14 +88,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#3b82f6",
     padding: 12,
     borderRadius: 5,
     alignItems: "center",
     width: "100%",
-  },
-  disabledButton: {
-    opacity: 0.7,
   },
   buttonText: {
     color: "#fff",

@@ -10,14 +10,20 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
+  TextInput,
+  BackHandler,
 } from "react-native";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import { Ionicons } from "@expo/vector-icons";
+import { CommonActions } from '@react-navigation/native';
 
 const Profile = ({ navigation }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
   const { token, logout } = useContext(AuthContext);
 
   const fetchUserDetails = async () => {
@@ -29,11 +35,56 @@ const Profile = ({ navigation }) => {
         }
       );
       setUserDetails(response.data);
+      setNewName(response.data.name || "");
     } catch (error) {
       console.error("Error fetching user details:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!newName.trim()) {
+      Alert.alert("Error", "Name cannot be empty");
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      const response = await axios.put(
+        "http://192.168.8.101:5000/api/users/update",
+        { name: newName },
+        { headers: { "x-auth-token": token } }
+      );
+
+      // Update local state
+      setUserDetails({
+        ...userDetails,
+        name: newName
+      });
+
+      setIsEditing(false);
+      Alert.alert("Success", "Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      Alert.alert("Error", "Failed to update profile. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleEditPress = () => {
+    if (isEditing) {
+      handleUpdateProfile();
+    } else {
+      setNewName(userDetails?.name || "");
+      setIsEditing(true);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setNewName(userDetails?.name || "");
+    setIsEditing(false);
   };
 
   const handleDeleteAccount = async () => {
@@ -46,17 +97,21 @@ const Profile = ({ navigation }) => {
       );
   
       Alert.alert("Success", response.data.msg);
-      logout(); // This will now reset the navigation stack
+      // Logout and reset navigation
+      logout();
+      resetNavigationToAuth();
     } catch (error) {
       if (error.response && error.response.status === 401) {
         Alert.alert("Session Expired", "Please log in again.");
         logout();
+        resetNavigationToAuth();
       } else {
         console.error("Error deleting account:", error);
         Alert.alert("Error", "Failed to delete account. Please try again.");
       }
     }
   };
+
   const confirmDeleteAccount = () => {
     Alert.alert(
       "Delete Account",
@@ -73,6 +128,30 @@ const Profile = ({ navigation }) => {
         },
       ]
     );
+  };
+  
+  const handleSettings = () => {
+    Alert.alert(
+      "Settings",
+      "Settings functionality will be implemented in a future update.",
+      [{ text: "OK", onPress: () => console.log("Settings alert closed") }]
+    );
+  };
+
+  // Function to reset navigation stack to Auth screen
+  const resetNavigationToAuth = () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Auth' }],
+      })
+    );
+  };
+
+  // Function to handle logout
+  const handleLogout = () => {
+    logout();
+    resetNavigationToAuth();
   };
 
   useEffect(() => {
@@ -98,9 +177,18 @@ const Profile = ({ navigation }) => {
         <Text style={styles.headerTitle}>My Profile</Text>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => console.log("Edit profile")}
+          onPress={handleEditPress}
+          disabled={isUpdating}
         >
-          <Ionicons name="create-outline" size={22} color="#fff" />
+          {isUpdating ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Ionicons 
+              name={isEditing ? "checkmark-outline" : "create-outline"} 
+              size={22} 
+              color="#fff" 
+            />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -121,7 +209,28 @@ const Profile = ({ navigation }) => {
           )}
 
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>{userDetails?.name || "User Name"}</Text>
+            {isEditing ? (
+              <View style={styles.editingContainer}>
+                <TextInput
+                  style={styles.nameInput}
+                  value={newName}
+                  onChangeText={setNewName}
+                  autoFocus={true}
+                  maxLength={50}
+                  placeholder="Enter your name"
+                />
+                {isEditing && (
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={handleCancelEdit}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : (
+              <Text style={styles.name}>{userDetails?.name || "User Name"}</Text>
+            )}
             <View style={styles.emailContainer}>
               <Ionicons
                 name="mail-outline"
@@ -150,21 +259,32 @@ const Profile = ({ navigation }) => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => console.log("Edit profile")}
+              onPress={handleEditPress}
+              disabled={isUpdating}
             >
-              <Ionicons
-                name="person-outline"
-                size={22}
-                color="#6366f1"
-                style={styles.buttonIcon}
+              {isUpdating ? (
+                <ActivityIndicator size="small" color="#6366f1" style={styles.buttonIcon} />
+              ) : (
+                <Ionicons
+                  name="person-outline"
+                  size={22}
+                  color="#6366f1"
+                  style={styles.buttonIcon}
+                />
+              )}
+              <Text style={styles.actionButtonText}>
+                {isEditing ? "Save Profile" : "Edit Profile"}
+              </Text>
+              <Ionicons 
+                name={isEditing ? "checkmark-outline" : "chevron-forward"} 
+                size={20} 
+                color={isEditing ? "#6366f1" : "#c7c7c7"} 
               />
-              <Text style={styles.actionButtonText}>Edit Profile</Text>
-              <Ionicons name="chevron-forward" size={20} color="#c7c7c7" />
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => console.log("Settings")}
+              onPress={handleSettings}
             >
               <Ionicons
                 name="settings-outline"
@@ -178,10 +298,7 @@ const Profile = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => {
-                logout();
-                navigation.navigate("Auth");
-              }}
+              onPress={handleLogout}
             >
               <Ionicons
                 name="log-out-outline"
@@ -296,10 +413,37 @@ const styles = StyleSheet.create({
     marginTop: 16,
     width: "100%",
   },
+  editingContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
   name: {
     fontSize: 22,
     fontWeight: "700",
     color: "#0f172a",
+  },
+  nameInput: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#0f172a",
+    borderBottomWidth: 1,
+    borderBottomColor: "#6366f1",
+    padding: 4,
+    textAlign: "center",
+    width: "80%",
+    marginBottom: 10,
+  },
+  cancelButton: {
+    marginTop: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: "#f1f5f9",
+    borderRadius: 10,
+  },
+  cancelButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#64748b",
   },
   emailContainer: {
     flexDirection: "row",
@@ -362,6 +506,7 @@ const styles = StyleSheet.create({
   },
   buttonIcon: {
     marginRight: 14,
+    width: 22,
   },
   actionButtonText: {
     flex: 1,

@@ -55,6 +55,11 @@ const AuthScreen = ({ navigation }) => {
     }
   };
 
+  
+  const handleForgotPassword = () => {
+    navigation.navigate("ForgotPassword");
+  };
+
   const handleSignup = async () => {
     try {
       setSignupLoading(true);
@@ -136,6 +141,12 @@ const AuthScreen = ({ navigation }) => {
         ) : (
           <Text style={styles.buttonText}>Sign in</Text>
         )}
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.forgotPassword} 
+        onPress={handleForgotPassword}
+      >
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
       </TouchableOpacity>
 
       <Text style={styles.dividerText}>Or continue with</Text>
@@ -342,6 +353,15 @@ const styles = StyleSheet.create({
     color: "#111827",
     textAlign: "center",
     marginBottom: 15,
+  },
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginBottom: 15,
+  },
+  forgotPasswordText: {
+    color: "#3b82f6",
+    fontSize: 14,
+    fontWeight: "500",
   },
   tabContainer: {
     flexDirection: "row",
