@@ -8,6 +8,7 @@ import {
   Alert,
   SafeAreaView,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { AntDesign, Feather } from "@expo/vector-icons";
@@ -20,6 +21,10 @@ const AuthScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Loading states
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [signupLoading, setSignupLoading] = useState(false);
 
   // Signup specific states
   const [name, setName] = useState("");
@@ -31,6 +36,7 @@ const AuthScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
+      setLoginLoading(true);
       const response = await axios.post(
         "https://mobile-backend-news.vercel.app/api/users/login",
         { email, password }
@@ -44,11 +50,14 @@ const AuthScreen = ({ navigation }) => {
         "Login Failed",
         err.response ? err.response.data.error : "Invalid credentials"
       );
+    } finally {
+      setLoginLoading(false);
     }
   };
 
   const handleSignup = async () => {
     try {
+      setSignupLoading(true);
       if (password !== confirmPassword) {
         Alert.alert("Error", "Passwords do not match");
         return;
@@ -73,6 +82,8 @@ const AuthScreen = ({ navigation }) => {
         "Error",
         err.response ? err.response.data.error : "Signup failed"
       );
+    } finally {
+      setSignupLoading(false);
     }
   };
 
@@ -115,8 +126,16 @@ const AuthScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Sign in</Text>
+      <TouchableOpacity 
+        style={[styles.button, loginLoading && styles.disabledButton]} 
+        onPress={handleLogin}
+        disabled={loginLoading}
+      >
+        {loginLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Sign in</Text>
+        )}
       </TouchableOpacity>
 
       <Text style={styles.dividerText}>Or continue with</Text>
@@ -206,8 +225,16 @@ const AuthScreen = ({ navigation }) => {
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Create account</Text>
+      <TouchableOpacity 
+        style={[styles.button, signupLoading && styles.disabledButton]} 
+        onPress={handleSignup}
+        disabled={signupLoading}
+      >
+        {signupLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Create account</Text>
+        )}
       </TouchableOpacity>
     </>
   );
@@ -405,6 +432,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignItems: "center",
     marginBottom: 20,
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
   buttonText: {
     color: "#fff",

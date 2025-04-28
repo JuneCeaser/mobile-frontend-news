@@ -38,29 +38,25 @@ const Profile = ({ navigation }) => {
 
   const handleDeleteAccount = async () => {
     try {
-      console.log("Token being sent:", token); // Log the token
       const response = await axios.delete(
         "https://mobile-backend-news.vercel.app/api/users/delete",
         {
           headers: { "x-auth-token": token },
         }
       );
-
+  
       Alert.alert("Success", response.data.msg);
-      logout();
-      navigation.navigate("Auth");
+      logout(); // This will now reset the navigation stack
     } catch (error) {
       if (error.response && error.response.status === 401) {
         Alert.alert("Session Expired", "Please log in again.");
-        logout(); // Clear the token and user data
-        navigation.navigate("Auth"); // Redirect to the login screen
+        logout();
       } else {
         console.error("Error deleting account:", error);
         Alert.alert("Error", "Failed to delete account. Please try again.");
       }
     }
   };
-
   const confirmDeleteAccount = () => {
     Alert.alert(
       "Delete Account",

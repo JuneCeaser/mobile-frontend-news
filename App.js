@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AuthScreen from "./screens/AuthScreen";
@@ -9,9 +9,11 @@ import { AuthProvider } from "./AuthContext";
 const Stack = createStackNavigator();
 
 export default function App() {
+  const navigationRef = useRef();
+
   return (
-    <AuthProvider>
-      <NavigationContainer>
+    <AuthProvider navigationRef={navigationRef}>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator>
           <Stack.Screen
             name="Auth"
@@ -26,7 +28,7 @@ export default function App() {
           <Stack.Screen
             name="HomeTabs"
             component={BottomTabNavigator}
-            options={{ headerShown: false }}
+            options={{ headerShown: false, gestureEnabled: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

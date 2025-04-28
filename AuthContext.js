@@ -1,8 +1,9 @@
 import React, { createContext, useState } from "react";
+import { CommonActions } from '@react-navigation/native';
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children, navigationRef }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
@@ -14,6 +15,13 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    // Reset navigation stack to Auth screen
+    navigationRef.current?.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Auth' }],
+      })
+    );
   };
 
   return (
@@ -22,5 +30,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-
