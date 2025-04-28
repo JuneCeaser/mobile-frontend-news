@@ -49,7 +49,7 @@ const Home = () => {
   const fetchNewsletters = async () => {
     try {
       const response = await axios.get(
-        "http:/192.168.8.101:5000/api/newsletters"
+        "https://news-mobile-backend.vercel.app/api/newsletters"
       );
       setNewsletters(response.data);
     } catch (error) {
@@ -76,7 +76,7 @@ const Home = () => {
   const fetchUserDetails = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.8.101:5000/api/users/me",
+        "https://news-mobile-backend.vercel.app/api/users/me",
         {
           headers: { "x-auth-token": token },
         }

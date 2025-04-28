@@ -38,7 +38,7 @@ const AuthScreen = ({ navigation }) => {
     try {
       setLoginLoading(true);
       const response = await axios.post(
-        "http://192.168.8.101:5000/api/users/login",
+        "https://news-mobile-backend.vercel.app/api/users/login",
         { email, password }
       );
 
@@ -74,7 +74,7 @@ const AuthScreen = ({ navigation }) => {
       }
 
       const response = await axios.post(
-        "http://192.168.8.101:5000/api/users/signup",
+        "https://news-mobile-backend.vercel.app/api/users/signup",
         { name, email, password }
       );
 

@@ -26,7 +26,7 @@ const ForgotPasswordScreen = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://192.168.8.101:5000/api/users/forgot-password",
+        "https://news-mobile-backend.vercel.app/api/users/forgot-password",
         { email }
       );
 

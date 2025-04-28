@@ -31,7 +31,7 @@ const ResetPasswordScreen = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://192.168.8.101:5000/api/users/verify-reset-otp",
+        "https://news-mobile-backend.vercel.app/api/users/verify-reset-otp",
         { email, otp }
       );
 
@@ -66,7 +66,7 @@ const ResetPasswordScreen = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://192.168.8.101:5000/api/users/reset-password",
+        "https://news-mobile-backend.vercel.app/api/users/reset-password",
         { email, password }
       );
 
