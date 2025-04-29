@@ -17,7 +17,7 @@ const ResetPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1); // 1 for OTP verification, 2 for password reset
+  const [step, setStep] = useState(1); 
   const navigation = useNavigation();
   const route = useRoute();
   const { email } = route.params;

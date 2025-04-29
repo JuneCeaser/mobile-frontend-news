@@ -15,7 +15,7 @@ export const AuthProvider = ({ children, navigationRef }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
-    // Reset navigation stack to Auth screen
+ 
     navigationRef.current?.dispatch(
       CommonActions.reset({
         index: 0,

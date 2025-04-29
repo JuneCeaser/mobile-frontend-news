@@ -36,7 +36,7 @@ const VerifyOTP = ({ navigation }) => {
 
       Alert.alert("Success", response.data.msg);
 
-      // Use "Auth" instead of "AuthScreen"
+
       navigation.replace("Auth");
     } catch (err) {
       Alert.alert(

@@ -32,6 +32,7 @@ const NewsletterCard = ({ title, content, imageUrl }) => (
   </View>
 );
 
+
 const Home = () => {
   const [greeting, setGreeting] = useState("");
   const [weather, setWeather] = useState({ temp: null, condition: "" });

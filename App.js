@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const navigationRef = useRef();
-
+                                                                                         
   return (
     <AuthProvider navigationRef={navigationRef}>
       <NavigationContainer ref={navigationRef}>
